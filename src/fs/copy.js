@@ -1,20 +1,12 @@
-import { cp, readdir } from 'fs/promises';
+import { cp } from 'fs/promises';
 
 export const copy = async () => {
-    const rootDir = '.';
-    const srcDirName = 'files';
-    const destDirName = 'files_copy'
-    const paths = await readdir(rootDir);
-
-    if (paths.includes(destDirName)) {
-        throw new Error('FS operation failed');
-    }
-
     try {
-        await cp(`${rootDir}/${srcDirName}`, `${rootDir}/${destDirName}`, { recursive: true })
+        await cp('./files', './files_copy', { recursive: true, force: false, errorOnExist: true })
     } catch (err) {
-        if (err.code === 'ENOENT') {
+        if (err.code === 'ENOENT' || err.code === 'ERR_FS_CP_EEXIST') {
             throw new Error('FS operation failed')
         }
     }
 };
+
